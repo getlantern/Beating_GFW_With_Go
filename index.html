@@ -1,0 +1,382 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Beating the GFW with Go | An Explanation of Domain Fronting with Flashlight | by Percy Wegmann @oxtoacart</title>
+    
+    <meta name="author" content="Percy Wegmann" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
+    
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+</head>
+
+<body>
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+
+<div id="impress">
+
+    <div id="start" class="step" data-x="0" data-y="-2000" data-z="10000" style="padding-bottom: 500px;">
+        <h2>Beating the Great Firewall with Go</h2>
+        <h3>at <a href="http://www.getlantern.org">Lantern</a></h3>
+    </div>
+
+    <div id="youtube" class="step slide" data-x="0" data-y="0">
+        <dl>
+            <dt>Want</dt>
+            <dd>Let's watch <a href="https://www.youtube.com">YouTube</a>!</dd>
+        </dl>
+    </div>
+
+    <div id="youtubepic" class="step slide" data-x="0" data-y="50" data-z="-50" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjgwABQTR0VUIC8gSFRUUC8xLjE&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjgwABQTR0VUIC8gSFRUUC8xLjE&s=vs2010">
+        </a>
+    </div>
+
+    <div id="goldenshield" class="step slide" data-x="600" data-y="0" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>Problem</dt>
+            <dd><a href="http://en.wikipedia.org/wiki/Golden_Shield_Project">Project Golden Shield</a> (a.k.a. the Great Firewall of China or GFW) "protects" me from terrible sites like YouTube using <a href="https://www.usenix.org/system/files/conference/foci14/foci14-anonymous.pdf">DNS injection</a> and <a href="http://campus.murraystate.edu/academic/faculty/wlyle/540/2013/Bu.pdf">TCP RST</a> blocking.</dd>
+        </dl>
+    </div>
+
+    <div id="dnsinjection" class="step slide" data-x="550" data-y="100" data-z="-400" data-rotate-y="90" data-scale="0.4">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgRE5TIEluamVjdGlvbgoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KR0ZXLT5HRlc6IGRvbWFpbiBibGFja2xpc3RlZCEAGAYAQAc6IGJhZCBJUCBhZGRyZXNzAFUKPz8_OiB0Y3AAEg8&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgRE5TIEluamVjdGlvbgoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KR0ZXLT5HRlc6IGRvbWFpbiBibGFja2xpc3RlZCEAGAYAQAc6IGJhZCBJUCBhZGRyZXNzAFUKPz8_OiB0Y3AAEg8&s=vs2010">
+        </a>
+    </div>
+
+    <div id="tcprst" class="step slide" data-x="550" data-y="100" data-z="-800" data-rotate-y="90" data-scale="0.4">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgVENQIFJTVAoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEAPQpZb3VUdWJlOiB0Y3AAFg46ODAKR0ZXLT5HRlc6IElQIGJsYWNrbGlzdGVkIQAUBgBUCXRjcCBSU1Q&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgVENQIFJTVAoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEAPQpZb3VUdWJlOiB0Y3AAFg46ODAKR0ZXLT5HRlc6IElQIGJsYWNrbGlzdGVkIQAUBgBUCXRjcCBSU1Q&s=vs2010">
+        </a>
+    </div>
+
+    <div id="webproxy" class="step slide" data-x="600" data-y="-800" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Use an HTTP-based web proxy!</dd>
+        </dl>
+    </div>
+
+    <div id="webproxypic" class="step slide" data-x="550" data-y="-750" data-z="-600" data-rotate-y="90" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCgBFBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAG8JMTczLjE5NC4xMTUAOQpZb3VUdWJlAIEPBwAWDDo4MAAUEUdFVCAAfQo&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCgBFBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAG8JMTczLjE5NC4xMTUAOQpZb3VUdWJlAIEPBwAWDDo4MAAUEUdFVCAAfQo&s=vs2010">
+        </a>
+    </div>
+
+    <div id="proxydetection" class="step slide" data-x="0" data-y="-800" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>Problem</dt>
+            <dd>GFW can use content filtering and port scans to detect proxies, then block their IPs.</dd>
+        </dl>
+    </div>
+
+    <div id="contentfiltering" class="step slide" data-x="0" data-y="-720" data-z="-1150" data-rotate-y="180" data-scale="0.6">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+        </a>
+    </div>
+
+    <div id="encryptedwebproxy" class="step slide" data-x="0" data-y="-1600" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Encrypt connections to the proxy!</dd>
+        </dl>
+    </div>
+
+    <div id="encryptedwebproxypic" class="step slide" data-x="0" data-y="-1550" data-z="-1150" data-rotate-y="180" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo0NDMKABcQVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAPRFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xIChlbmNyeXB0ZWQpAF8IRE4AVgg6IEE_AC8MCgARCgCBSgkxNzMuMTk0LjExNS4xOjgwAIElCFlvdVR1YmUAgW0HAAUgR0VUIACBDAo&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo0NDMKABcQVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAPRFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xIChlbmNyeXB0ZWQpAF8IRE4AVgg6IEE_AC8MCgARCgCBSgkxNzMuMTk0LjExNS4xOjgwAIElCFlvdVR1YmUAgW0HAAUgR0VUIACBDAo&s=vs2010">
+        </a>
+    </div>
+
+    <div id="distribution" class="step slide" data-x="-600" data-y="-1600" data-z="-600" data-rotate-y="270">
+        <dl>
+            <dt>Problem</dt>
+            <dd>Even with encrypted connections, GFW still manages to find our proxies, port scan them and block them. At least part of the problem is how to distribute the IP addresses to legitimate users without also distributing them to GFW agents.</dd>
+        </dl>
+    </div>
+
+    <div id="portscan" class="step slide" data-x="-600" data-y="-1470" data-z="-600" data-rotate-y="270" data-scale="0.5">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+        </a>
+    </div>
+
+    <div id="collateralfreedom" class="step slide" data-x="-600" data-y="-2500" data-z="-600" data-rotate-y="270" data-rotate-x="90">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Make our traffic look like something that the GFW doesn't want to block for economic reasons. This is known as <a href="https://openitp.org/pdfs/CollateralFreedom.pdf">Collateral Freedom</a>.</dd>
+        </dl>
+    </div>
+
+    <div id="domainfronting" class="step slide" data-x="-600" data-y="-3500" data-z="-600" data-rotate-y="270" data-rotate-x="90">
+        <dl>
+            <dt>Domain Fronting</dt>
+            <dd>
+                <p>Pioneered by <a href="https://github.com/goagent/goagent">GoAgent</a> and used amongst others by <a href="https://trac.torproject.org/projects/tor/wiki/doc/meek">Tor's Meek transport</a>, domain fronting hides traffic to the proxy inside connections to "legitimate" websites.</p>
+                <dl>
+                    <dd>Domain fronting relies on Content Delivery Networks (CDNs) acting as reverse proxies</dd>
+                    <dd>Domain fronting requires a local proxy to be installed on the client's machine</dd>
+                </dl>
+            </dd>
+    </div>
+
+    <div id="domainfrontingpic" class="step slide" data-x="-550" data-y="-3500" data-z="-400" data-rotate-y="270" data-rotate-x="90" data-scale="0.25">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0NPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAdRhUTFMgAIFEBkhlbGxvIChTTkk6AIEPDCkAfBRQT1NUIC8AgSoJIChlbmNyeXB0ZWQpXG5Ib3N0OiBwcm94eS5nZXRsYW50ZXJuLm9yZ1xuWC1FbgAVBS1JZDogMTIzNDUACQxEZXN0LUFkZHIAdg06ODBcbkJvZACBCCdETi0-U2VydmVyAIMVCACBIA8AImUAdgwtPllvdVR1YmUAgkslACUHAIE1EFRMUyAAgVEGAIMlBShDTgBVHQCEMwUyMDAgT0sgAIIyCgAkHQCCNQUAhUkOADoHAFwgAIN1DACEeBgAgR8hAIZDF0dFAIRTGACEOGIAhG8GAGYcAIRMIQAiYACEURcAghsb&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0NPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAdRhUTFMgAIFEBkhlbGxvIChTTkk6AIEPDCkAfBRQT1NUIC8AgSoJIChlbmNyeXB0ZWQpXG5Ib3N0OiBwcm94eS5nZXRsYW50ZXJuLm9yZ1xuWC1FbgAVBS1JZDogMTIzNDUACQxEZXN0LUFkZHIAdg06ODBcbkJvZACBCCdETi0-U2VydmVyAIMVCACBIA8AImUAdgwtPllvdVR1YmUAgkslACUHAIE1EFRMUyAAgVEGAIMlBShDTgBVHQCEMwUyMDAgT0sgAIIyCgAkHQCCNQUAhUkOADoHAFwgAIN1DACEeBgAgR8hAIZDF0dFAIRTGACEOGIAhG8GAGYcAIRMIQAiYACEURcAghsb&s=vs2010">
+        </a>
+    </div>
+
+    <div id="youtubeistls" class="step slide" data-x="-600" data-y="-4500" data-z="-600" data-rotate-y="270" data-rotate-x="90">
+        <dl>
+            <dt>Problem</dt>
+            <dd>That's cool, but real YouTube traffic is HTTPS, meaning it's carried over TLS. So, the Client Proxy can't see the browser's requests.</dd>
+        </dl>
+    </div>
+
+    <div id="youtubetlspic" class="step slide" data-x="-550" data-y="-4500" data-z="-525" data-rotate-y="270" data-rotate-x="90">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjQ0MwAVE1RMUyBDbGllbnRIZWxsbyAoU05JOgBzDCkKAE0HAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjQ0MwAVE1RMUyBDbGllbnRIZWxsbyAoU05JOgBzDCkKAE0HAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010">
+        </a>
+    </div>
+
+<!--
+    <div id="youtubeistls" class="step slide" data-x="-1000" data-y="-1500">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Instead of encapsulating HTTP in HTTP, encapsulate arbitrary (encrypted) data in HTTP.</dd>
+        </dl>
+    </div>
+
+    <div id="domainfrontingencryptedpic" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010">
+            <img src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010">
+        </a>
+    </div>
+
+    <div id="fullduplex" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010">
+            <img src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010">
+        </a>
+    </div>
+
+<!--
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="___">
+            <img src="___">
+        </a>
+    </div>
+
+    
+
+let's watch YouTube
+
+
+
+
+
+
+with a ___ web proxy
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEUFLT5ETlMgU2VydmVyOiBBPwAjDAoAEQoAbwkxNzMuMTk0LjExNQA5CllvdVR1YmUAgQ8HABYMOjgwABQRR0VUIAB9Cg&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEUFLT5ETlMgU2VydmVyOiBBPwAjDAoAEQoAbwkxNzMuMTk0LjExNQA5CllvdVR1YmUAgQ8HABYMOjgwABQRR0VUIAB9Cg&s=vs2010
+
+
+
+with an encrypted web proxy
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSAuLi4KCkJyb3dzZXItPlByb3h5OiB0Y3AgMTI4LjE5OS4xMDYuNDc6NDQzABYRVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAZBFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xICgAgTMJKQBfCEROAFYIOiBBPwAvDAoAEQoAgUoJMTczLjE5NC4xMTUuMTo4MACBJQhZb3VUdWJlAIFtBwAFIEdFVCAAgQwK&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSAuLi4KCkJyb3dzZXItPlByb3h5OiB0Y3AgMTI4LjE5OS4xMDYuNDc6NDQzABYRVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAZBFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xICgAgTMJKQBfCEROAFYIOiBBPwAvDAoAEQoAgUoJMTczLjE5NC4xMTUuMTo4MACBJQhZb3VUdWJlAIFtBwAFIEdFVCAAgQwK&s=vs2010
+
+
+
+with an encrypted web proxy behind a CDN
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGEdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SUE9TVCAAghAKICgAgxMJKVxuSG9zdDoAgxoGLmdldGxhbnRlcm4ub3JnXG5YLUVuAIM1BS1EZXN0LUFkZHI6AIJiD1xuQm9kAIMEBwCCcQxETi0-AIJqBgCDTAwxMjguMTk5LjEwNi40Nzo4MAAVFACBIA8ASzwAdgwtPk90aGVyIACDew8AhDULCgAREACBMxAxNzMuMTk0LjExNS4xOjgwAFEPWW91VHViZQCBZAcABScAgisO&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGEdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SUE9TVCAAghAKICgAgxMJKVxuSG9zdDoAgxoGLmdldGxhbnRlcm4ub3JnXG5YLUVuAIM1BS1EZXN0LUFkZHI6AIJiD1xuQm9kAIMEBwCCcQxETi0-AIJqBgCDTAwxMjguMTk5LjEwNi40Nzo4MAAVFACBIA8ASzwAdgwtPk90aGVyIACDew8AhDULCgAREACBMxAxNzMuMTk0LjExNS4xOjgwAFEPWW91VHViZQCBZAcABScAgisO&s=vs2010
+
+
+
+let's watch YouTube over TLS
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgbGV0J3MgV2F0Y2ggWW91VHViZSBvdmVyIFRMUyAuLi4KCkJyb3dzZXItPkROUyBTZXJ2ZXI6IEE_IHlvdXR1YmUuY29tCgARCi0-ACkHOiAxNzMuMTk0LjExNS4xAD0KAF8HOiB0Y3AAFg46NDQzABUTVExTIENsaWVudEhlbGxvIChTTkk6AHMMKQoAgTMHAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgbGV0J3MgV2F0Y2ggWW91VHViZSBvdmVyIFRMUyAuLi4KCkJyb3dzZXItPkROUyBTZXJ2ZXI6IEE_IHlvdXR1YmUuY29tCgARCi0-ACkHOiAxNzMuMTk0LjExNS4xAD0KAF8HOiB0Y3AAFg46NDQzABUTVExTIENsaWVudEhlbGxvIChTTkk6AHMMKQoAgTMHAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010
+
+
+
+with a ___ web proxy
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUNPTk5FQ1QgeW91dHViZS5jb206NDQzIEhUVFAvMS4xCgBJBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAHMJMTczLjE5NC4xMTUAOQpZb3VUdWJlAIETBwAWDDo4MABgCACBPwc6IDIwMACBFAlPSwCBVAoAKxs0NDMAFRNUTFMgQ2xpZW50SGVsbG8gKFNOSToAgWQMKQoAgRMHAHMLVEwAgWcIAC4HQ04AJQ8AgH8SR0VUIC8AgjAJIChlbmNyeXB0ZWQp&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUNPTk5FQ1QgeW91dHViZS5jb206NDQzIEhUVFAvMS4xCgBJBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAHMJMTczLjE5NC4xMTUAOQpZb3VUdWJlAIETBwAWDDo4MABgCACBPwc6IDIwMACBFAlPSwCBVAoAKxs0NDMAFRNUTFMgQ2xpZW50SGVsbG8gKFNOSToAgWQMKQoAgRMHAHMLVEwAgWcIAC4HQ04AJQ8AgH8SR0VUIC8AgjAJIChlbmNyeXB0ZWQp&s=vs2010
+
+
+
+with an encrypted web proxy behind a CDN
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010
+
+
+
+full duplex arbitrary TCP
+
+http://www.websequencediagrams.com/?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010
+http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010
+
+
+
+    <div id="problem1" class="step slide" data-x="-1000" data-y="-1500">
+        <dl>
+            <dt>Problem</dt>
+            <dd><a href="http://en.wikipedia.org/wiki/Golden_Shield_Project">Project Golden Shield</a> (a.k.a. the Great Firewall of China or GFW) "protects" Chinese internet users from terrible websites like <a href="https://www.youtube.com">YouTube</a>.</dd>
+        </dl>
+    </div>
+
+    <div id="solution1" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBXZWIgUHJveHkhCgpCcm93c2VyLT4ADAk6IEdFVCB5b3V0dWJlLmNvbS8gSFRUUC8xLjEKADEJLT5Zb3VUdWJlOiB0Y3AgY29ubmVjdCB0bwAtDDo4MAAdFUdFVCAASwo&s=vs2010">
+            <img src="http://www.websequencediagrams.com/?lz=dGl0bGUgU29sdXRpb24gLSBXZWIgUHJveHkhCgpCcm93c2VyLT4ADAk6IEdFVCB5b3V0dWJlLmNvbS8gSFRUUC8xLjEKADEJLT5Zb3VUdWJlOiB0Y3AgY29ubmVjdCB0bwAtDDo4MAAdFUdFVCAASwo&s=vs2010">
+        </a>
+    </div>
+
+
+    <div id="problem2" class="step slide" data-x="-1000" data-y="-1500">
+        <dl>
+            <dt>Problem</dt>
+            <dd>YouTube is HTTPS Only!</dd>
+        </dl>
+    </div>
+
+    <div id="solution2" class="step slide" data-x="-1000" data-y="-1500">
+        <a href="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBIVFRQIENPTk5FQ1QKCkJyb3dzZXItPldlYiBQcm94eToAFQggeW91dHViZS5jb206NDQzADUFLzEuMQoAIwktPllvdVR1YmU6IHRjcCBjb25uZWN0IHRvACwQAF4KACgJVExTIGhhbmRzaGFrZQANE0dFVCAvAGsJ&s=vs2010">
+            <img src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBIVFRQIENPTk5FQ1QKCkJyb3dzZXItPldlYiBQcm94eToAFQggeW91dHViZS5jb206NDQzCgAaCS0-WW91VHViZTogdGNwIGNvbm5lY3QgdG8AIhEAVgkAKAlHRVQgLw&s=vs2010">
+        </a>
+    </div>
+
+    
+    -->
+
+</div>
+
+<!--
+    
+    Hint is not related to impress.js in any way.
+    
+    But it can show you how to use impress.js features in creative way.
+    
+    When the presentation step is shown (selected) its element gets the class of "active" and the body element
+    gets the class based on active step id `impress-on-ID` (where ID is the step's id)... It may not be
+    so clear because of all these "ids" in previous sentence, so for example when the first step (the one with
+    the id of `bored`) is active, body element gets a class of `impress-on-bored`.
+    
+    This class is used by this hint below. Check CSS file to see how it's shown with delayed CSS animation when
+    the first step of presentation is visible for a couple of seconds.
+    
+    ...
+    
+    And when it comes to this piece of JavaScript below ... kids, don't do this at home ;)
+    It's just a quick and dirty workaround to get different hint text for touch devices.
+    In a real world it should be at least placed in separate JS file ... and the touch content should be
+    probably just hidden somewhere in HTML - not hard-coded in the script.
+    
+    Just sayin' ;)
+    
+-->
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+
+<!--
+    
+    Last, but not least.
+    
+    To make all described above really work, you need to include impress.js in the page.
+    I strongly encourage to minify it first.
+    
+    In here I just include full source of the script to make it more readable.
+    
+    You also need to call a `impress().init()` function to initialize impress.js presentation.
+    And you should do it in the end of your document. Not only because it's a good practice, but also
+    because it should be done when the whole document is ready.
+    Of course you can wrap it in any kind of "DOM ready" event, but I was too lazy to do so ;)
+    
+-->
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+<!--
+    
+    The `impress()` function also gives you access to the API that controls the presentation.
+    
+    Just store the result of the call:
+    
+        var api = impress();
+    
+    and you will get three functions you can call:
+    
+        `api.init()` - initializes the presentation,
+        `api.next()` - moves to next step of the presentation,
+        `api.prev()` - moves to previous step of the presentation,
+        `api.goto( idx | id | element, [duration] )` - moves the presentation to the step given by its index number
+                id or the DOM element; second parameter can be used to define duration of the transition in ms,
+                but it's optional - if not provided default transition duration for the presentation will be used.
+    
+    You can also simply call `impress()` again to get the API, so `impress().next()` is also allowed.
+    Don't worry, it wont initialize the presentation again.
+    
+    For some example uses of this API check the last part of the source of impress.js where the API
+    is used in event handlers.
+    
+-->
+
+</body>
+</html>
