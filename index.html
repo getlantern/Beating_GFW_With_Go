@@ -28,9 +28,11 @@
 
 <div id="impress">
 
-    <div id="start" class="step" data-x="0" data-y="-2000" data-z="10000" style="padding-bottom: 500px;">
-        <h2>Beating the Great Firewall with Go</h2>
+    <div id="start" class="step" data-x="500" data-y="-2000" data-z="10000" style="padding-bottom: 400px;">
+        <h2>Beating the Great Firewall of China with Go</h2>
         <h3>at <a href="http://www.getlantern.org">Lantern</a></h3>
+        <p style="font-size: 0.4em; margin-top: 1em;">Jan. 15 2015</br><br/>Percy Wegmann<br/>(ox@getlantern.org)</p>
+        <p><img src="img/lantern.png" style="margin-top: 50px; margin-left: 25px;"></p>
     </div>
 
     <div id="youtube" class="step slide" data-x="0" data-y="0">
@@ -111,12 +113,6 @@
         </dl>
     </div>
 
-    <div id="portscan" class="step slide" data-x="-600" data-y="-1470" data-z="-600" data-rotate-y="270" data-scale="0.5">
-        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
-            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
-        </a>
-    </div>
-
     <div id="collateralfreedom" class="step slide" data-x="-600" data-y="-2400" data-z="-600" data-rotate-y="270">
         <dl>
             <dt>Solution</dt>
@@ -129,16 +125,16 @@
             <dt>Domain Fronting</dt>
             <dd>
                 <p>Pioneered by <a href="https://github.com/goagent/goagent">GoAgent</a> and used amongst others by <a href="https://trac.torproject.org/projects/tor/wiki/doc/meek">Tor's Meek transport</a>, domain fronting hides traffic to the proxy inside connections to "legitimate" websites.</p>
-                <dl>
-                    <dd>Domain fronting relies on Content Delivery Networks (CDNs) acting as reverse proxies</dd>
-                    <dd>Domain fronting requires a local proxy to be installed on the client's machine</dd>
+                <dl style="font-size: 0.8em">
+                    <dd>Exploits the fact that Content Delivery Networks (CDNs) are basically large, shared reverse proxies.</dd>
+                    <dd>Requires a local proxy to be installed on the client's machine because browser's don't know how to domain-front.</dd>
                 </dl>
             </dd>
     </div>
 
-    <div id="domainfrontingpic" class="step slide" data-x="0" data-y="-2200" data-z="-50" data-rotate-y="360" data-scale="0.25">
-        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0NPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAdRhUTFMgAIFEBkhlbGxvIChTTkk6AIEPDCkAfBRQT1NUIC8AgSoJIChlbmNyeXB0ZWQpXG5Ib3N0OiBwcm94eS5nZXRsYW50ZXJuLm9yZ1xuWC1FbgAVBS1JZDogMTIzNDUACQxEZXN0LUFkZHIAdg06ODBcbkJvZACBCCdETi0-U2VydmVyAIMVCACBIA8AImUAdgwtPllvdVR1YmUAgkslACUHAIE1EFRMUyAAgVEGAIMlBShDTgBVHQCEMwUyMDAgT0sgAIIyCgAkHQCCNQUAhUkOADoHAFwgAIN1DACEeBgAgR8hAIZDF0dFAIRTGACEOGIAhG8GAGYcAIRMIQAiYACEURcAghsb&s=vs2010">
-            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0NPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAdRhUTFMgAIFEBkhlbGxvIChTTkk6AIEPDCkAfBRQT1NUIC8AgSoJIChlbmNyeXB0ZWQpXG5Ib3N0OiBwcm94eS5nZXRsYW50ZXJuLm9yZ1xuWC1FbgAVBS1JZDogMTIzNDUACQxEZXN0LUFkZHIAdg06ODBcbkJvZACBCCdETi0-U2VydmVyAIMVCACBIA8AImUAdgwtPllvdVR1YmUAgkslACUHAIE1EFRMUyAAgVEGAIMlBShDTgBVHQCEMwUyMDAgT0sgAIIyCgAkHQCCNQUAhUkOADoHAFwgAIN1DACEeBgAgR8hAIZDF0dFAIRTGACEOGIAhG8GAGYcAIRMIQAiYACEURcAghsb&s=vs2010">
+    <div id="domainfrontingpic" class="step slide" data-x="0" data-y="-2220" data-z="-50" data-rotate-y="360" data-scale="0.25">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0dFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SR0VUIACCDwogKGVuY3J5cHRlZClcbkhvc3Q6IHByb3h5LmdldGxhbnRlcm4ub3JnXG5YLUVuABUFLURlc3QtQWRkcjoAgmEPAIEkBgCCUwYAgzUMMTI4LjE5OS4xMDYuNDcAEhcAgQoOAEomAF8MLT5PdGhlciAAg00PAIQHCwoAERAAgRwQMTczLjE5NC4xMTUuMQBOEllvdVR1YmUAgU0HAAUnAIJhDg&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0dFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SR0VUIACCDwogKGVuY3J5cHRlZClcbkhvc3Q6IHByb3h5LmdldGxhbnRlcm4ub3JnXG5YLUVuABUFLURlc3QtQWRkcjoAgmEPAIEkBgCCUwYAgzUMMTI4LjE5OS4xMDYuNDcAEhcAgQoOAEomAF8MLT5PdGhlciAAg00PAIQHCwoAERAAgRwQMTczLjE5NC4xMTUuMQBOEllvdVR1YmUAgU0HAAUnAIJhDg&s=vs2010">
         </a>
     </div>
 
@@ -158,7 +154,7 @@
     <div id="enacpsulateencrypted" class="step slide" data-x="600" data-y="-3200" data-z="-600" data-rotate-y="450">
         <dl>
             <dt>Solution</dt>
-            <dd>Instead of encapsulating HTTP in HTTP, encapsulate arbitrary (encrypted) data in HTTP.</dd>
+            <dd>Instead of using straight HTTP, encapsulate HTTP/TLS inside HTTP.</dd>
         </dl>
     </div>
 
@@ -181,164 +177,119 @@
         </a>
     </div>
 
-    <div id="whataboutgo" class="step slide" data-x="0" data-y="600" data-z="-600" data-rotate-x="90">
+    <div id="whataboutgo" class="step slide" data-x="0" data-y="-1500" data-z="-600" data-rotate-x="90">
         <dl>
             <dt>Great, but ...</dt>
             <dd>You said something about using Go?</dd>
         </dl>
     </div>
 
-<!--
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    <div id="___" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="___">
-            <img src="___">
-        </a>
-    </div>
-
-    
-
-let's watch YouTube
-
-
-
-
-
-
-with a ___ web proxy
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEUFLT5ETlMgU2VydmVyOiBBPwAjDAoAEQoAbwkxNzMuMTk0LjExNQA5CllvdVR1YmUAgQ8HABYMOjgwABQRR0VUIAB9Cg&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEUFLT5ETlMgU2VydmVyOiBBPwAjDAoAEQoAbwkxNzMuMTk0LjExNQA5CllvdVR1YmUAgQ8HABYMOjgwABQRR0VUIAB9Cg&s=vs2010
-
-
-
-with an encrypted web proxy
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSAuLi4KCkJyb3dzZXItPlByb3h5OiB0Y3AgMTI4LjE5OS4xMDYuNDc6NDQzABYRVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAZBFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xICgAgTMJKQBfCEROAFYIOiBBPwAvDAoAEQoAgUoJMTczLjE5NC4xMTUuMTo4MACBJQhZb3VUdWJlAIFtBwAFIEdFVCAAgQwK&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSAuLi4KCkJyb3dzZXItPlByb3h5OiB0Y3AgMTI4LjE5OS4xMDYuNDc6NDQzABYRVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAZBFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xICgAgTMJKQBfCEROAFYIOiBBPwAvDAoAEQoAgUoJMTczLjE5NC4xMTUuMTo4MACBJQhZb3VUdWJlAIFtBwAFIEdFVCAAgQwK&s=vs2010
-
-
-
-with an encrypted web proxy behind a CDN
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGEdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SUE9TVCAAghAKICgAgxMJKVxuSG9zdDoAgxoGLmdldGxhbnRlcm4ub3JnXG5YLUVuAIM1BS1EZXN0LUFkZHI6AIJiD1xuQm9kAIMEBwCCcQxETi0-AIJqBgCDTAwxMjguMTk5LjEwNi40Nzo4MAAVFACBIA8ASzwAdgwtPk90aGVyIACDew8AhDULCgAREACBMxAxNzMuMTk0LjExNS4xOjgwAFEPWW91VHViZQCBZAcABScAgisO&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGEdFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SUE9TVCAAghAKICgAgxMJKVxuSG9zdDoAgxoGLmdldGxhbnRlcm4ub3JnXG5YLUVuAIM1BS1EZXN0LUFkZHI6AIJiD1xuQm9kAIMEBwCCcQxETi0-AIJqBgCDTAwxMjguMTk5LjEwNi40Nzo4MAAVFACBIA8ASzwAdgwtPk90aGVyIACDew8AhDULCgAREACBMxAxNzMuMTk0LjExNS4xOjgwAFEPWW91VHViZQCBZAcABScAgisO&s=vs2010
-
-
-
-let's watch YouTube over TLS
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgbGV0J3MgV2F0Y2ggWW91VHViZSBvdmVyIFRMUyAuLi4KCkJyb3dzZXItPkROUyBTZXJ2ZXI6IEE_IHlvdXR1YmUuY29tCgARCi0-ACkHOiAxNzMuMTk0LjExNS4xAD0KAF8HOiB0Y3AAFg46NDQzABUTVExTIENsaWVudEhlbGxvIChTTkk6AHMMKQoAgTMHAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgbGV0J3MgV2F0Y2ggWW91VHViZSBvdmVyIFRMUyAuLi4KCkJyb3dzZXItPkROUyBTZXJ2ZXI6IEE_IHlvdXR1YmUuY29tCgARCi0-ACkHOiAxNzMuMTk0LjExNS4xAD0KAF8HOiB0Y3AAFg46NDQzABUTVExTIENsaWVudEhlbGxvIChTTkk6AHMMKQoAgTMHAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010
-
-
-
-with a ___ web proxy
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUNPTk5FQ1QgeW91dHViZS5jb206NDQzIEhUVFAvMS4xCgBJBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAHMJMTczLjE5NC4xMTUAOQpZb3VUdWJlAIETBwAWDDo4MABgCACBPwc6IDIwMACBFAlPSwCBVAoAKxs0NDMAFRNUTFMgQ2xpZW50SGVsbG8gKFNOSToAgWQMKQoAgRMHAHMLVEwAgWcIAC4HQ04AJQ8AgH8SR0VUIC8AgjAJIChlbmNyeXB0ZWQp&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYSBfX18gd2ViIHByb3h5IC4uLgoKQnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAAVEUNPTk5FQ1QgeW91dHViZS5jb206NDQzIEhUVFAvMS4xCgBJBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAHMJMTczLjE5NC4xMTUAOQpZb3VUdWJlAIETBwAWDDo4MABgCACBPwc6IDIwMACBFAlPSwCBVAoAKxs0NDMAFRNUTFMgQ2xpZW50SGVsbG8gKFNOSToAgWQMKQoAgRMHAHMLVEwAgWcIAC4HQ04AJQ8AgH8SR0VUIC8AgjAJIChlbmNyeXB0ZWQp&s=vs2010
-
-
-
-with an encrypted web proxy behind a CDN
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010
-
-
-
-full duplex arbitrary TCP
-
-http://www.websequencediagrams.com/?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010
-http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010
-
-
-
-    <div id="problem1" class="step slide" data-x="-1000" data-y="-1500">
+    <div id="golove" class="step slide" data-x="0" data-y="600" data-z="-600" data-rotate-x="90">
         <dl>
-            <dt>Problem</dt>
-            <dd><a href="http://en.wikipedia.org/wiki/Golden_Shield_Project">Project Golden Shield</a> (a.k.a. the Great Firewall of China or GFW) "protects" Chinese internet users from terrible websites like <a href="https://www.youtube.com">YouTube</a>.</dd>
+            <dt>net + http + crypto = love</dt>
+            <dd>- Performant (non-blocking i/o)</dd>
+            <dd>- Easy (synchronous calling semantics)</dd>
+            <dd>- Highly composable (net.conn and http.Handler)</dd>
+            <dd>- Excellent http support (net/http)</dd>
         </dl>
     </div>
 
-    <div id="solution1" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBXZWIgUHJveHkhCgpCcm93c2VyLT4ADAk6IEdFVCB5b3V0dWJlLmNvbS8gSFRUUC8xLjEKADEJLT5Zb3VUdWJlOiB0Y3AgY29ubmVjdCB0bwAtDDo4MAAdFUdFVCAASwo&s=vs2010">
-            <img src="http://www.websequencediagrams.com/?lz=dGl0bGUgU29sdXRpb24gLSBXZWIgUHJveHkhCgpCcm93c2VyLT4ADAk6IEdFVCB5b3V0dWJlLmNvbS8gSFRUUC8xLjEKADEJLT5Zb3VUdWJlOiB0Y3AgY29ubmVjdCB0bwAtDDo4MAAdFUdFVCAASwo&s=vs2010">
-        </a>
-    </div>
-
-
-    <div id="problem2" class="step slide" data-x="-1000" data-y="-1500">
+    <div id="idletiming" class="step slide" data-x="2200" data-y="0">
         <dl>
-            <dt>Problem</dt>
-            <dd>YouTube is HTTPS Only!</dd>
+            <dt>idletiming</dt>
+            <dd>- idle timeouts for net.Conn and net.Listener</dd>
+            <dd>- proxies need idle timeouts for disappearing clients</dd>
         </dl>
     </div>
 
-    <div id="solution2" class="step slide" data-x="-1000" data-y="-1500">
-        <a href="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBIVFRQIENPTk5FQ1QKCkJyb3dzZXItPldlYiBQcm94eToAFQggeW91dHViZS5jb206NDQzADUFLzEuMQoAIwktPllvdVR1YmU6IHRjcCBjb25uZWN0IHRvACwQAF4KACgJVExTIGhhbmRzaGFrZQANE0dFVCAvAGsJ&s=vs2010">
-            <img src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgU29sdXRpb24gLSBIVFRQIENPTk5FQ1QKCkJyb3dzZXItPldlYiBQcm94eToAFQggeW91dHViZS5jb206NDQzCgAaCS0-WW91VHViZTogdGNwIGNvbm5lY3QgdG8AIhEAVgkAKAlHRVQgLw&s=vs2010">
-        </a>
+    <div id="idletimingcode" class="step slide" data-x="2200" data-y="0" data-y="50" data-z="-5" data-rotate-y="180">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/idletiming"></iframe>
+        </div>
     </div>
 
-    
-    -->
+    <div id="tlsdialer" class="step slide" data-x="2800" data-y="0" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>tlsdialer</dt>
+            <dd>- disable SNI in handshake (reqd. for some CDNs)</dd>
+            <dd>- timings for network ops</dd>
+        </dl>
+    </div>
+
+    <div id="tlsdialercode" class="step slide" data-x="2795" data-y="0" data-z="-600" data-rotate-y="270">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/tlsdialer"></iframe>
+        </div>
+    </div>
+
+    <div id="fronted" class="step slide" data-x="2200" data-y="0" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>fronted</dt>
+            <dd>- provides dialer for client-side use</dd>
+            <dd>- supplied to enproxy to dial to CDN</dd>
+            <dd>- provides server-side proxy based on enproxy.Proxy</dd>
+        </dl>
+    </div>
+
+    <div id="frontedcode" class="step slide" data-x="2200" data-y="0" data-z="-1195" data-rotate-y="360">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/fronted"></iframe>
+        </div>
+    </div>
+
+    <div id="enproxy" class="step slide" data-x="2200" data-y="-800" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>enproxy</dt>
+            <dd>- implements net.Conn for client-side use</dd>
+            <dd>- implements http.Handler for server-side use</dd>
+            <dd>- encapsulates data in HTTP requests</dd>
+            <dd>- configurable dialing behavior</dd>
+        </dl>
+    </div>
+
+    <div id="enproxycode" class="step slide" data-x="2200" data-y="-800" data-z="-1195" data-rotate-y="360">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/enproxy"></iframe>
+        </div>
+    </div>
+
+    <div id="pooled" class="step slide" data-x="2800" data-y="-800" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>connpool</dt>
+            <dd>- provides pool of connections</dd>
+            <dd>- speeds up enproxy by dialing ahead of time</dd>
+        </dl>
+    </div>
+
+    <div id="pooledcode" class="step slide" data-x="2795" data-y="-800" data-z="-600" data-rotate-y="270">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/connpool"></iframe>
+        </div>
+    </div>
+
+    <div id="flashlight" class="step slide" data-x="2200" data-y="-800">
+        <dl>
+            <dt>flashlight</dt>
+            <dd>- the actual application</dd>
+            <dd>- can run as either client or server</dd>
+            <dd>- ties it all together</dd>
+        </dl>
+        <p style="margin-top: 2em;"><a href="https://github.com/getlantern/flashlight/tree/master/client" target="_blank">View Code</a></p>
+    </div>
+
+    <div id="end" class="step" data-x="500" data-y="2000" data-z="10000" style="font-size: 1.5em;">
+        <dl>
+            <dt>Thanks to</dt>
+            <dd>- you for your time</dd>
+            <dd>- David Fifield of Tor for his work on domain-fronting</dd>
+            <dd>- impress.js for helping me build this presentation</dd>
+            <dd>- <a href="http://www.bravenewsoftware.org/">Brave New Software</a> for employing me*</dd>
+        </dl>
+        <p style="margin-top: 2em;">* - wants to hire a great Go developer</p>
+    </div>
 
 </div>
 
-<!--
-    
-    Hint is not related to impress.js in any way.
-    
-    But it can show you how to use impress.js features in creative way.
-    
-    When the presentation step is shown (selected) its element gets the class of "active" and the body element
-    gets the class based on active step id `impress-on-ID` (where ID is the step's id)... It may not be
-    so clear because of all these "ids" in previous sentence, so for example when the first step (the one with
-    the id of `bored`) is active, body element gets a class of `impress-on-bored`.
-    
-    This class is used by this hint below. Check CSS file to see how it's shown with delayed CSS animation when
-    the first step of presentation is visible for a couple of seconds.
-    
-    ...
-    
-    And when it comes to this piece of JavaScript below ... kids, don't do this at home ;)
-    It's just a quick and dirty workaround to get different hint text for touch devices.
-    In a real world it should be at least placed in separate JS file ... and the touch content should be
-    probably just hidden somewhere in HTML - not hard-coded in the script.
-    
-    Just sayin' ;)
-    
--->
 <div class="hint">
     <p>Use a spacebar or arrow keys to navigate</p>
 </div>
