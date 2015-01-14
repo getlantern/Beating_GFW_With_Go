@@ -1,0 +1,346 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Beating the GFW with Go | An Explanation of Domain Fronting with Flashlight | by Percy Wegmann @oxtoacart</title>
+    
+    <meta name="author" content="Percy Wegmann" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
+    
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+</head>
+
+<body>
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+
+<div id="impress">
+
+    <div id="start" class="step" data-x="500" data-y="-2000" data-z="10000" style="padding-bottom: 400px;">
+        <h2>Beating the Great Firewall of China with Go</h2>
+        <h3>at <a href="http://www.getlantern.org">Lantern</a></h3>
+        <p style="font-size: 0.4em; margin-top: 1em;">Jan. 15 2015</br><br/>Percy Wegmann<br/>(ox@getlantern.org)</p>
+        <p><img src="img/lantern.png" style="margin-top: 50px; margin-left: 25px;"></p>
+    </div>
+
+    <div id="youtube" class="step slide" data-x="0" data-y="0">
+        <dl>
+            <dt>Want</dt>
+            <dd>Let's watch <a href="https://www.youtube.com">YouTube</a>!</dd>
+        </dl>
+    </div>
+
+    <div id="youtubepic" class="step slide" data-x="0" data-y="50" data-z="-50" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjgwABQTR0VUIC8gSFRUUC8xLjE&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjgwABQTR0VUIC8gSFRUUC8xLjE&s=vs2010">
+        </a>
+    </div>
+
+    <div id="goldenshield" class="step slide" data-x="600" data-y="0" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>Problem</dt>
+            <dd><a href="http://en.wikipedia.org/wiki/Golden_Shield_Project">Project Golden Shield</a> (a.k.a. the Great Firewall of China or GFW) "protects" me from terrible sites like YouTube using <a href="https://www.usenix.org/system/files/conference/foci14/foci14-anonymous.pdf">DNS injection</a> and <a href="http://campus.murraystate.edu/academic/faculty/wlyle/540/2013/Bu.pdf">TCP RST</a> blocking.</dd>
+        </dl>
+    </div>
+
+    <div id="dnsinjection" class="step slide" data-x="550" data-y="100" data-z="-400" data-rotate-y="90" data-scale="0.4">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgRE5TIEluamVjdGlvbgoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KR0ZXLT5HRlc6IGRvbWFpbiBibGFja2xpc3RlZCEAGAYAQAc6IGJhZCBJUCBhZGRyZXNzAFUKPz8_OiB0Y3AAEg8&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgRE5TIEluamVjdGlvbgoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KR0ZXLT5HRlc6IGRvbWFpbiBibGFja2xpc3RlZCEAGAYAQAc6IGJhZCBJUCBhZGRyZXNzAFUKPz8_OiB0Y3AAEg8&s=vs2010">
+        </a>
+    </div>
+
+    <div id="tcprst" class="step slide" data-x="550" data-y="100" data-z="-800" data-rotate-y="90" data-scale="0.4">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgVENQIFJTVAoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEAPQpZb3VUdWJlOiB0Y3AAFg46ODAKR0ZXLT5HRlc6IElQIGJsYWNrbGlzdGVkIQAUBgBUCXRjcCBSU1Q&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgVENQIFJTVAoKQnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEAPQpZb3VUdWJlOiB0Y3AAFg46ODAKR0ZXLT5HRlc6IElQIGJsYWNrbGlzdGVkIQAUBgBUCXRjcCBSU1Q&s=vs2010">
+        </a>
+    </div>
+
+    <div id="webproxy" class="step slide" data-x="600" data-y="-800" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Use an HTTP-based web proxy!</dd>
+        </dl>
+    </div>
+
+    <div id="webproxypic" class="step slide" data-x="550" data-y="-750" data-z="-600" data-rotate-y="90" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCgBFBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAG8JMTczLjE5NC4xMTUAOQpZb3VUdWJlAIEPBwAWDDo4MAAUEUdFVCAAfQo&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCgBFBS0-RE5TIFNlcnZlcjogQT8AIwwKABEKAG8JMTczLjE5NC4xMTUAOQpZb3VUdWJlAIEPBwAWDDo4MAAUEUdFVCAAfQo&s=vs2010">
+        </a>
+    </div>
+
+    <div id="proxydetection" class="step slide" data-x="0" data-y="-800" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>Problem</dt>
+            <dd>GFW can use content filtering and port scans to detect proxies, then block their IPs.</dd>
+        </dl>
+    </div>
+
+    <div id="contentfiltering" class="step slide" data-x="0" data-y="-720" data-z="-1150" data-rotate-y="180" data-scale="0.6">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo4MAoAFhBHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xCkdGVy0-R0ZXOiBQb3RlbnRpYWwgcHJveHkAFAYAYgdQb3J0IHNjYW4AJQtJdCdzIGEAJwYhAD0LQmxhY2tsaXN0AIEMDy44MAoAgTMFLT5ETlMgU2VydmVyOiBBPwCBEQwKABEKAIFdCTE3My4xOTQuMTE1LjEAOwhZb3VUdWJlAIF9BwAWDDoAXgoAHAlHRVQgAIFqCwCCIiYAghYFAIJsBzogVENQIFJTVA&s=vs2010">
+        </a>
+    </div>
+
+    <div id="encryptedwebproxy" class="step slide" data-x="0" data-y="-1600" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Encrypt connections to the proxy!</dd>
+        </dl>
+    </div>
+
+    <div id="encryptedwebproxypic" class="step slide" data-x="0" data-y="-1550" data-z="-1150" data-rotate-y="180" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo0NDMKABcQVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAPRFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xIChlbmNyeXB0ZWQpAF8IRE4AVgg6IEE_AC8MCgARCgCBSgkxNzMuMTk0LjExNS4xOjgwAIElCFlvdVR1YmUAgW0HAAUgR0VUIACBDAo&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-UHJveHk6IHRjcCAxMjguMTk5LjEwNi40Nzo0NDMKABcQVExTIENsaWVudEhlbGxvCgA5BS0-AEcHABoGU2VydmVyABsFIChzZWxmLXNpZ25lZCkAPRFHRVQgeW91dHViZS5jb206ODAvIEhUVFAvMS4xIChlbmNyeXB0ZWQpAF8IRE4AVgg6IEE_AC8MCgARCgCBSgkxNzMuMTk0LjExNS4xOjgwAIElCFlvdVR1YmUAgW0HAAUgR0VUIACBDAo&s=vs2010">
+        </a>
+    </div>
+
+    <div id="distribution" class="step slide" data-x="-600" data-y="-1600" data-z="-600" data-rotate-y="270">
+        <dl>
+            <dt>Problem</dt>
+            <dd>Even with encrypted connections, GFW still manages to find our proxies, port scan them and block them. At least part of the problem is how to distribute the IP addresses to legitimate users without also distributing them to GFW agents.</dd>
+        </dl>
+    </div>
+
+    <div id="collateralfreedom" class="step slide" data-x="-600" data-y="-2400" data-z="-600" data-rotate-y="270">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Make our traffic look like something that the GFW doesn't want to block for economic reasons. This is known as <a href="https://openitp.org/pdfs/CollateralFreedom.pdf">Collateral Freedom</a>.</dd>
+        </dl>
+    </div>
+
+    <div id="domainfronting" class="step slide" data-x="0" data-y="-2400" data-z="0" data-rotate-y="360">
+        <dl>
+            <dt>Domain Fronting</dt>
+            <dd>
+                <p>Pioneered by <a href="https://github.com/goagent/goagent">GoAgent</a> and used amongst others by <a href="https://trac.torproject.org/projects/tor/wiki/doc/meek">Tor's Meek transport</a>, domain fronting hides traffic to the proxy inside connections to "legitimate" websites.</p>
+                <dl style="font-size: 0.8em">
+                    <dd>Exploits the fact that Content Delivery Networks (CDNs) are basically large, shared reverse proxies.</dd>
+                    <dd>Requires a local proxy to be installed on the client's machine because browser's don't know how to domain-front.</dd>
+                </dl>
+            </dd>
+    </div>
+
+    <div id="domainfrontingpic" class="step slide" data-x="0" data-y="-2220" data-z="-50" data-rotate-y="360" data-scale="0.25">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0dFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SR0VUIACCDwogKGVuY3J5cHRlZClcbkhvc3Q6IHByb3h5LmdldGxhbnRlcm4ub3JnXG5YLUVuABUFLURlc3QtQWRkcjoAgmEPAIEkBgCCUwYAgzUMMTI4LjE5OS4xMDYuNDcAEhcAgQoOAEomAF8MLT5PdGhlciAAg00PAIQHCwoAERAAgRwQMTczLjE5NC4xMTUuMQBOEllvdVR1YmUAgU0HAAUnAIJhDg&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-Q2xpZW50IFByb3h5OiB0Y3AgbG9jYWxob3N0OjEwMDgwCgAUF0dFVCB5b3V0dWJlLmNvbTo4MC8gSFRUUC8xLjEKAEoMLT5ETlMgU2VydmVyOiBBPyB0aGVoYWNrZXJuZXdzLmNvbQoAFwoAgQEQMjE2LjIzOS4zNC4yAEcQQ0ROAIEsBgAYDTo0NDMAFRRUTFMgAIFnBkhlbGxvIChTTkk6AHoSKQpDRE4AggcQVEwAgTkIADUHQ04AJRYAgQ4SR0VUIACCDwogKGVuY3J5cHRlZClcbkhvc3Q6IHByb3h5LmdldGxhbnRlcm4ub3JnXG5YLUVuABUFLURlc3QtQWRkcjoAgmEPAIEkBgCCUwYAgzUMMTI4LjE5OS4xMDYuNDcAEhcAgQoOAEomAF8MLT5PdGhlciAAg00PAIQHCwoAERAAgRwQMTczLjE5NC4xMTUuMQBOEllvdVR1YmUAgU0HAAUnAIJhDg&s=vs2010">
+        </a>
+    </div>
+
+    <div id="youtubeistls" class="step slide" data-x="600" data-y="-2400" data-z="-600" data-rotate-y="450">
+        <dl>
+            <dt>Problem</dt>
+            <dd>That's cool, but real YouTube traffic is HTTPS, meaning it's carried over TLS. So, the Client Proxy can't see the browser's requests.</dd>
+        </dl>
+    </div>
+
+    <div id="youtubetlspic" class="step slide" data-x="550" data-y="-2300" data-z="-600" data-rotate-y="450" data-scale="0.5">
+        <a href="http://www.websequencediagrams.com/?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjQ0MwAVE1RMUyBDbGllbnRIZWxsbyAoU05JOgBzDCkKAE0HAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=QnJvd3Nlci0-RE5TIFNlcnZlcjogQT8geW91dHViZS5jb20KABEKLT4AKQc6IDE3My4xOTQuMTE1LjEKAD4JWW91VHViZTogdGNwABYOOjQ0MwAVE1RMUyBDbGllbnRIZWxsbyAoU05JOgBzDCkKAE0HAHILVEwAgSUIAC4HQ04AJQ8AgH8SR0VUIC8gSFRUUC8xLjEgKGVuY3J5cHRlZCk&s=vs2010">
+        </a>
+    </div>
+
+    <div id="enacpsulateencrypted" class="step slide" data-x="600" data-y="-3200" data-z="-600" data-rotate-y="450">
+        <dl>
+            <dt>Solution</dt>
+            <dd>Instead of using straight HTTP, encapsulate HTTP/TLS inside HTTP.</dd>
+        </dl>
+    </div>
+
+    <div id="domainfrontingencryptedpic" class="step slide" data-x="550" data-y="-3125" data-z="-600" data-rotate-y="450" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgLi4uIHdpdGggYW4gZW5jcnlwdGVkIHdlYiBwcm94eSBiZWhpbmQgYSBDRE4KCkJyb3dzZXItPkNsaWVudCBQcm94eTogdGNwIGxvY2FsaG9zdDoxMDA4MAATGENPTk5FQ1QgeW91dHViZS5jb206ODAgSFRUUC8xLjEKAE0MLT5DRE4AWQUrVExTIGFzIHRoZWhhY2tlcm5ld3MuY29tACEPAIEZBzogMjAwAGIJT0sAgSAYVExTIACBRAZIZWxsbyAoU05JOgCBDwwpAHwUUE9TVCAvAIEqCSAoAIIvCSlcbkhvc3Q6AII2Bi5nZXRsYW50ZXJuLm9yZ1xuWC1FbgCCUQUtSWQ6IDEyMzQ1AAkMRGVzdC1BZGRyAHYNOjgwXG5Cb2QAgQgnRE4tPlNlcnZlcgCDFQgAgSAPACJlAHYMLT5Zb3VUdWJlAIJLJQAlBwCBNRBUTFMgAIFRBgCDJQUoQ04AVR0AhDMFMjAwIE9LIACCMgoAJB0AgjUFAIVJDgA6BwBcIACDdQwAhHgYAIEfIQCGQxdHRQCEUxgAhDhiAIRvBgBmHACETCEAImAAhFEXAIIbGw&s=vs2010">
+        </a>
+    </div>
+
+    <div id="fullduplex" class="step slide" data-x="0" data-y="-3600" data-z="-600" data-rotate-x="90">
+        <dl>
+            <dt>Enhancement</dt>
+            <dd>Support full-duplex operation!</dd>
+        </dl>
+    </div>
+
+    <div id="fullduplexpic" class="step slide" data-x="0" data-y="-3550" data-z="-525" data-rotate-x="90" data-scale="0.7">
+        <a href="http://www.websequencediagrams.com/?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010">
+            <img class="diagram" src="http://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgZnVsbCBkdXBsZXggYXJiaXRyYXJ5IHRjcAoKQ2hhdCBDbGllbnQtPgACBiBQcm94eTogQ09OTkVDVCB0YWxrLmdvb2dsZS5jb206NTIyMiBIVFRQLzEuMQoAKAwtPkNETjogdGNwK1RMUyBhcyB0aGVoYWNrZXJuZXdzLmNvbQAgEAB1CjogMjAwAGwJT0sAgH8cVExTAIEuB0hlbGxvIChTTkk6IHlvdXR1YgCBIAUpAIEEFFBPU1QgLwCBMAtETi0-U2VydmVyAIFsCAATEAASDC0-RwCCAAUgVGFsawBsGACCHg8pCgApCwBdEFRMUyAAeQYAgUEFKENOAC0TAHQOAIJbBTIwMCBPSwAqFQCBdQ5ETgCDRBAAFCcgKGVuY3J5cHRlZACCOREAgyYMAGIhAIFjG01lc3NhZ2UgMQBRHEROOiBHRQCDKA4AhRgaAEsIMgAzIACDew9cbkJvZAAmGgCEFRIAgQQPAIMKGgCBThcAgwAZAIFwJQCGKAwARhsAhT0dAIFVHgCFXBsAgk8V&s=vs2010">
+        </a>
+    </div>
+
+    <div id="whataboutgo" class="step slide" data-x="0" data-y="-1500" data-z="-600" data-rotate-x="90">
+        <dl>
+            <dt>Great, but ...</dt>
+            <dd>You said something about using Go?</dd>
+        </dl>
+    </div>
+
+    <div id="golove" class="step slide" data-x="0" data-y="600" data-z="-600" data-rotate-x="90">
+        <dl>
+            <dt>net + http + crypto = love</dt>
+            <dd>- Performant (non-blocking i/o)</dd>
+            <dd>- Easy (synchronous calling semantics)</dd>
+            <dd>- Highly composable (net.conn and http.Handler)</dd>
+            <dd>- Excellent http support (net/http)</dd>
+        </dl>
+    </div>
+
+    <div id="idletiming" class="step slide" data-x="2200" data-y="0">
+        <dl>
+            <dt>idletiming</dt>
+            <dd>- idle timeouts for net.Conn and net.Listener</dd>
+            <dd>- proxies need idle timeouts for disappearing clients</dd>
+        </dl>
+    </div>
+
+    <div id="idletimingcode" class="step slide" data-x="2200" data-y="0" data-y="50" data-z="-5" data-rotate-y="180">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/idletiming"></iframe>
+        </div>
+    </div>
+
+    <div id="tlsdialer" class="step slide" data-x="2800" data-y="0" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>tlsdialer</dt>
+            <dd>- disable SNI in handshake (reqd. for some CDNs)</dd>
+            <dd>- timings for network ops</dd>
+        </dl>
+    </div>
+
+    <div id="tlsdialercode" class="step slide" data-x="2795" data-y="0" data-z="-600" data-rotate-y="270">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/tlsdialer"></iframe>
+        </div>
+    </div>
+
+    <div id="fronted" class="step slide" data-x="2200" data-y="0" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>fronted</dt>
+            <dd>- provides dialer for client-side use</dd>
+            <dd>- supplied to enproxy to dial to CDN</dd>
+            <dd>- provides server-side proxy based on enproxy.Proxy</dd>
+        </dl>
+    </div>
+
+    <div id="frontedcode" class="step slide" data-x="2200" data-y="0" data-z="-1195" data-rotate-y="360">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/fronted"></iframe>
+        </div>
+    </div>
+
+    <div id="enproxy" class="step slide" data-x="2200" data-y="-800" data-z="-1200" data-rotate-y="180">
+        <dl>
+            <dt>enproxy</dt>
+            <dd>- implements net.Conn for client-side use</dd>
+            <dd>- implements http.Handler for server-side use</dd>
+            <dd>- encapsulates data in HTTP requests</dd>
+            <dd>- configurable dialing behavior</dd>
+        </dl>
+    </div>
+
+    <div id="enproxycode" class="step slide" data-x="2200" data-y="-800" data-z="-1195" data-rotate-y="360">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/enproxy"></iframe>
+        </div>
+    </div>
+
+    <div id="pooled" class="step slide" data-x="2800" data-y="-800" data-z="-600" data-rotate-y="90">
+        <dl>
+            <dt>connpool</dt>
+            <dd>- provides pool of connections</dd>
+            <dd>- speeds up enproxy by dialing ahead of time</dd>
+        </dl>
+    </div>
+
+    <div id="pooledcode" class="step slide" data-x="2795" data-y="-800" data-z="-600" data-rotate-y="270">
+        <div class="code">
+            <iframe src="http://godoc.org/github.com/getlantern/connpool"></iframe>
+        </div>
+    </div>
+
+    <div id="flashlight" class="step slide" data-x="2200" data-y="-800">
+        <dl>
+            <dt>flashlight</dt>
+            <dd>- the actual application</dd>
+            <dd>- can run as either client or server</dd>
+            <dd>- ties it all together</dd>
+        </dl>
+        <p style="margin-top: 2em;"><a href="https://github.com/getlantern/flashlight/tree/master/client" target="_blank">View Code</a></p>
+    </div>
+
+    <div id="end" class="step" data-x="500" data-y="2000" data-z="10000" style="font-size: 1.5em;">
+        <dl>
+            <dt>Thanks to</dt>
+            <dd>- you for your time</dd>
+            <dd>- David Fifield of Tor for his work on domain-fronting</dd>
+            <dd>- impress.js for helping me build this presentation</dd>
+            <dd>- <a href="http://www.bravenewsoftware.org/">Brave New Software</a> for employing me*</dd>
+        </dl>
+        <p style="margin-top: 2em;">* - wants to hire a great Go developer</p>
+    </div>
+
+</div>
+
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+
+<!--
+    
+    Last, but not least.
+    
+    To make all described above really work, you need to include impress.js in the page.
+    I strongly encourage to minify it first.
+    
+    In here I just include full source of the script to make it more readable.
+    
+    You also need to call a `impress().init()` function to initialize impress.js presentation.
+    And you should do it in the end of your document. Not only because it's a good practice, but also
+    because it should be done when the whole document is ready.
+    Of course you can wrap it in any kind of "DOM ready" event, but I was too lazy to do so ;)
+    
+-->
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+<!--
+    
+    The `impress()` function also gives you access to the API that controls the presentation.
+    
+    Just store the result of the call:
+    
+        var api = impress();
+    
+    and you will get three functions you can call:
+    
+        `api.init()` - initializes the presentation,
+        `api.next()` - moves to next step of the presentation,
+        `api.prev()` - moves to previous step of the presentation,
+        `api.goto( idx | id | element, [duration] )` - moves the presentation to the step given by its index number
+                id or the DOM element; second parameter can be used to define duration of the transition in ms,
+                but it's optional - if not provided default transition duration for the presentation will be used.
+    
+    You can also simply call `impress()` again to get the API, so `impress().next()` is also allowed.
+    Don't worry, it wont initialize the presentation again.
+    
+    For some example uses of this API check the last part of the source of impress.js where the API
+    is used in event handlers.
+    
+-->
+
+</body>
+</html>

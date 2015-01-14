@@ -1,0 +1,44 @@
+img.diagram {
+    width: 100%;
+}
+
+h2 {
+    font-size: 0.8em;
+}
+
+h3 {
+    font-size: 0.6em;
+}
+
+dt {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+dd {
+    margin-top: 1em;
+    margin-left: 2em;
+}
+
+div.slide {
+    overflow-y: hidden;
+}
+
+div.code {
+    width: 600px;
+    height: 800px;
+    margin: 0 auto;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+div.iframeBlocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
